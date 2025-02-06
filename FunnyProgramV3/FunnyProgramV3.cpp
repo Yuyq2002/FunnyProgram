@@ -2,12 +2,19 @@
 //
 
 #include <iostream>
+#include <string>
 
 #include <public/InputSystem.h>
 #include <public/KeyCode.h>
 
 int main()
 {
+	int chance = 0;
+	std::string in;
+	std::cin >> in;
+
+	chance = std::stoi(in);
+
 	FreeConsole();
 	srand(time(0));
 
@@ -58,7 +65,7 @@ int main()
 		{
 			if (InputSystem::IsKeyPressed(letterKeys[i]))
 			{
-				if (rand() % 100 <= 10)
+				if (1 + rand() % 100 <= chance)
 				{
 					int a = letterKeys[i];
 
