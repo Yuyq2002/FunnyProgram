@@ -40,7 +40,7 @@ public:
         }
 
         local_addr.sin_family = AF_INET;
-        inet_pton(AF_INET, "127.0.0.1", &local_addr.sin_addr.s_addr);
+        local_addr.sin_addr.S_un.S_addr = INADDR_ANY;
         if (is_server)
         {
             local_addr.sin_port = htons(DEFAULT_PORT);
