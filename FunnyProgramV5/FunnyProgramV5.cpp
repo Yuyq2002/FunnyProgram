@@ -38,6 +38,8 @@ int main() {
 	client.Init();
 	client.Connect();
 
+	FreeConsole();
+
 	while (true)
 	{
 		client.Recv();
