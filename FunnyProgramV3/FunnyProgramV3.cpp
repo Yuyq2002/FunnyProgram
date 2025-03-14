@@ -72,7 +72,10 @@ int main()
 					input[0].ki.wVk = a;
 					input[1].ki.wVk = a;
 
-					SendInput(ARRAYSIZE(input), input, sizeof(INPUT));
+					if (SendInput(ARRAYSIZE(input), input, sizeof(INPUT)))
+					{
+						std::cout << "Uppps some error in SendInput: " << GetLastError() << std::endl;
+					}
 				}
 			}
 		}

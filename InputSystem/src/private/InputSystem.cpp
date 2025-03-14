@@ -2,6 +2,8 @@
 #include "public/KeyCode.h"
 
 std::unordered_map<int, KeyState> InputSystem::m_keys;
+std::vector<int> InputSystem::KeysPressed;
+std::vector<int> InputSystem::KeysReleased;
 
 void InputSystem::Init()
 {
@@ -50,6 +52,9 @@ void InputSystem::Init()
 
 void InputSystem::UpdateInput()
 {
+	KeysPressed.clear();
+	KeysReleased.clear();
+
 	for (auto& k : m_keys)
 	{
 		// for keys pressed or released last frame, set pressed or released state to false
@@ -59,7 +64,11 @@ void InputSystem::UpdateInput()
 		// Update key input state for this frame
 		short pressed = GetKeyState(k.first) & 0x80;
 		k.second.is_released = (k.second.is_down && !pressed) ? true : false;
+		if (k.second.is_released) 
+			KeysReleased.push_back(k.first);
 		k.second.is_pressed = (pressed && !k.second.is_down) ? true : false;
+		if (k.second.is_pressed) 
+			KeysPressed.push_back(k.first);
 		k.second.is_down = pressed ? true : false;
 	}
 }
@@ -80,6 +89,16 @@ bool InputSystem::IsKeyReleased(int keyCode)
 {
 	if (m_keys[keyCode].is_released) return true;
 	return false;
+}
+
+const std::vector<int>& InputSystem::GetAnyKeysPressed()
+{
+	return KeysPressed;
+}
+
+const std::vector<int>& InputSystem::GetAnyKeysReleased()
+{
+	return KeysReleased;
 }
 
 void InputSystem::AddKey(const int& p_keyCode)

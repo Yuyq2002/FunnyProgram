@@ -5,9 +5,9 @@
 class Server : public Shared
 {
 public:
-    void Send(const char* buffer)
+    void Send(const byte_stream& stream)
     {
-        int iResult = sendto(sock, buffer, (int)strlen(buffer), 0, (SOCKADDR*)&remote_addr, sender_addr_len);
+        int iResult = sendto(sock, stream.m_buffer, stream.m_size, 0, (SOCKADDR*)&remote_addr, sender_addr_len);
         if (iResult == SOCKET_ERROR) {
             wprintf(L"send failed with error: %d\n", WSAGetLastError());
             WSACleanup();

@@ -31,25 +31,16 @@ int main() {
 
 	std::cin >> input;*/
 
+	std::string a;
+	std::cin >> a;
+
 	Client client;
 	client.Init();
-
-	std::string t;
-	std::cin >> t;
 	client.Connect();
-
-	std::string input;
 
 	while (true)
 	{
 		client.Recv();
-
-		std::getline(std::cin, input);
-		std::cin >> input;
-		if (input == "Close")
-			break;
-		else
-			client.SendToDest(input.c_str());
 	}
 
 	return 0;

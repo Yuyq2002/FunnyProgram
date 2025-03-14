@@ -1,11 +1,10 @@
 #include "Server.h"
 #include "InputSystem.h"
 #include "KeyCode.h"
-#include <string>
 
 int main()
 {
-	//InputSystem::Init();
+	InputSystem::Init();
 
 	Server server;
 	server.Init(true);
@@ -15,16 +14,33 @@ int main()
 
 	while (is_running)
 	{
+		InputSystem::UpdateInput();
+
 		if (InputSystem::IsKeyPressed(KeyCode_Add))
 		{
 			is_running = false;
 		}
 
-		server.Recv();
+		byte_stream stream;
+		byte_stream_writer writer(stream);
 
-		std::string input;
-		std::getline(std::cin, input);
+		std::vector<int> pressed = InputSystem::GetAnyKeysPressed();
+		for (const auto& k : pressed)
+		{
+			writer.serialize(k);
+			writer.serialize(true);
+		}
 
-		server.Send(input.c_str());
+		std::vector<int> released = InputSystem::GetAnyKeysReleased();
+		for (const auto& k : released)
+		{
+			writer.serialize(k);
+			writer.serialize(false);
+		}
+
+		server.Send(stream);
+
+		Sleep(16);
+
 	}
 }

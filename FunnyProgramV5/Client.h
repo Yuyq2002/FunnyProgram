@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Shared.h"
+#include "InputSystem.h"
 
 
 class Client : public Shared
@@ -15,12 +16,6 @@ public:
         if (inet_pton(AF_INET, "10.24.2.14", &des.sin_addr) == 1)
             Send(des, "Connect");
         else std::cout << WSAGetLastError() << std::endl;
-
-        ULONG enable = 1;
-        if (ioctlsocket(sock, FIONBIO, &enable) == SOCKET_ERROR)
-        {
-            std::cout << "ERROR: ENABLING NON-BLOCKING FAILED" << std::endl;
-        }
     }
 
     void Send(const sockaddr_in& des, const char* buffer)
@@ -39,11 +34,45 @@ public:
 
     void Recv()
     {
-        int iResult = recv(sock, recvbuf, recvbuflen, 0);
+        byte_stream stream;
+        sockaddr remote;
+        int sender_addr_len = sizeof(remote);
+
+        int iResult = recvfrom(sock, stream.m_buffer, 1024, 0, &remote, &sender_addr_len);
         if (iResult > 0)
         {
-            wprintf(L"Bytes received: %d\n", iResult);
-            std::cout << recvbuf << std::endl;
+            stream.m_size = iResult;
+            byte_stream_reader reader(stream);
+
+            int vInt = 0;
+            bool vBool = false;
+
+            std::vector<INPUT> input;
+
+            while (true)
+            {
+                if (reader.serialize(vInt) && reader.serialize(vBool))
+                {
+                    std::cout << vInt << " - " << vBool << std::endl;
+                    INPUT new_input;
+                    ZeroMemory(&new_input, sizeof(new_input));
+                    new_input.type = INPUT_KEYBOARD;
+                    new_input.ki.wVk = vInt;
+                    if(!vBool)
+                        new_input.ki.dwFlags = KEYEVENTF_KEYUP;
+                    input.push_back(new_input);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            if (SendInput(input.size(), input.data(), sizeof(INPUT)))
+            {
+                std::cout << "Uppps some error in SendInput: " << GetLastError() << std::endl;
+            }
+
+            std::cout << "-------------------------------------------------" << std::endl;
         }
     }
 
