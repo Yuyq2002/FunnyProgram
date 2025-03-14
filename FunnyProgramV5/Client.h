@@ -15,6 +15,12 @@ public:
         if (inet_pton(AF_INET, "10.24.2.14", &des.sin_addr) == 1)
             Send(des, "Connect");
         else std::cout << WSAGetLastError() << std::endl;
+
+        ULONG enable = 1;
+        if (ioctlsocket(sock, FIONBIO, &enable) == SOCKET_ERROR)
+        {
+            std::cout << "ERROR: ENABLING NON-BLOCKING FAILED" << std::endl;
+        }
     }
 
     void Send(const sockaddr_in& des, const char* buffer)

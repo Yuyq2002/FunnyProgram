@@ -1,6 +1,7 @@
 #include "Server.h"
 #include "InputSystem.h"
 #include "KeyCode.h"
+#include <string>
 
 int main()
 {
@@ -20,5 +21,10 @@ int main()
 		}
 
 		server.Recv();
+
+		std::string input;
+		std::getline(std::cin, input);
+
+		server.Send(input.c_str());
 	}
 }

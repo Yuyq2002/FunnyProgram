@@ -6,6 +6,7 @@
 #include "Client.h"
 //class Client ...
 #include <iostream>
+#include <string>
 
 int main() {
 	/*std::cout << "Client or Server" << std::endl;
@@ -41,6 +42,9 @@ int main() {
 
 	while (true)
 	{
+		client.Recv();
+
+		std::getline(std::cin, input);
 		std::cin >> input;
 		if (input == "Close")
 			break;

@@ -7,7 +7,7 @@ class Server : public Shared
 public:
     void Send(const char* buffer)
     {
-        int iResult = sendto(sock, sendbuf, (int)strlen(sendbuf), 0, (SOCKADDR*)&remote_addr, sender_addr_len);
+        int iResult = sendto(sock, buffer, (int)strlen(buffer), 0, (SOCKADDR*)&remote_addr, sender_addr_len);
         if (iResult == SOCKET_ERROR) {
             wprintf(L"send failed with error: %d\n", WSAGetLastError());
             WSACleanup();
@@ -18,6 +18,8 @@ public:
     {
         sockaddr remote;
         int addrlen = INET_ADDRSTRLEN;
+
+        ZeroMemory(&recvbuf, DEFAULT_BUFLEN);
 
         int iResult = recvfrom(sock, recvbuf, DEFAULT_BUFLEN, 0, &remote, &addrlen);
         if (iResult > 0)
@@ -52,6 +54,5 @@ private:
     sockaddr_in remote_addr;
     int sender_addr_len;
 
-    const char* sendbuf;
     char recvbuf[DEFAULT_BUFLEN] = "";
 };
